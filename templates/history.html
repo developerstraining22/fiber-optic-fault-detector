@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiber Optic Fault Detector - History</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-radius: 5px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .table {
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">Fiber Optic Detector</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/history">History</a></li>
+                <li class="nav-item"><a class="nav-link" href="/devices">Devices</a></li>
+                <li class="nav-item"><a class="nav-link" href="/analytics">Analytics</a></li>
+            
+                {% if user %}
+                    {# <h2>Welcome, {{ user }}</h2> #}
+                    <li class="nav-item"><a class="nav-link btn btn-danger" href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    {# <h2>Welcome, Guest</h2> #}
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="{{ url_for('login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+    <h2 class="text-center">History</h2>
+
+    <!-- History Table -->
+    <div class="section">
+        <h3>Fiber Optic Fault History</h3>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Device ID</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                    <th>Attenuation</th>
+                    <th>Distance</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <!-- History records will be dynamically populated here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function loadHistory() {
+        $.get("/get_history", function(data) {
+            $("#historyTableBody").empty();
+            data.forEach((record, index) => {
+                $("#historyTableBody").append(
+                    `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${record.device_id}</td>
+                        <td>${record.fiber_val.toFixed(2)}</td>
+                        <td>${record.details}</td>
+                        <td>${record.attenuation}</td>
+                        <td>${record.distance}</td>
+                        <td>${record.date}</td>
+                    </tr>
+                    `
+                );
+            });
+        });
+    }
+
+    $(document).ready(function() {
+        loadHistory();
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+[
+    {
+        "device_id": "4",
+        "fiber_val": -43.984375,
+        "date": "2025-03-28 23:45:44",
+        "details": "Fiber Cut",
+        "attenuation": 10,
+        "distance": 200
+    },
+    {
+        "device_id": "4",
+        "fiber_val": -3.984375,
+        "date": "2025-03-28 23:40:46",
+        "details": "Fiber Cut",
+        "attenuation": 10,
+        "distance": 200
+    },
+    {
+        "device_id": "4",
+        "fiber_val": -23.984375,
+        "date": "2025-03-28 23:45:46",
+        "details": "Fiber Cut",
+        "attenuation": 10,
+        "distance": 200
+    },
+    {
+        "device_id": "4",
+        "fiber_val": -43.984375,
+        "date": "2025-03-28 23:25:46",
+        "details": "Fiber Cut",
+        "attenuation": 10,
+        "distance": 200
+    },
+    {
+        "device_id": "4",
+        "fiber_val": -2.984375,
+        "date": "2025-03-28 23:45:46",
+        "details": "Fiber Cut",
+        "attenuation": 10,
+        "distance": 200
+    }
+]

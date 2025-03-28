@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiber Optic Fault Detector</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .slider {
+            width: 100%;
+            accent-color: #007bff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-radius: 5px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .result-box {
+            background: #e9f7ef;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">Fiber Optic Detector</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
+                <li class="nav-item"><a class="nav-link" href="/devices">Devices</a></li>
+                <li class="nav-item"><a class="nav-link" href="/analytics">Analytics</a></li>
+            
+                {% if user %}
+                    {# <h2>Welcome, {{ user }}</h2> #}
+                    <li class="nav-item"><a class="nav-link btn btn-danger" href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    {# <h2>Welcome, Guest</h2> #}
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="{{ url_for('login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+            
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+    <h2 class="text-center text-primary fw-bold mt-4">Fiber Optic Fault Detector</h2>
+    <p class="text-center">IoT-Enabled Test Mode</p>
+
+    <div class="row">
+        <!-- Input Parameters -->
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h5>Input Parameters</h5>
+
+                <label>Signal Power (dB): <span id="signalValue">-20</span> dB</label>
+                <input type="range" id="signal" min="-50" max="0" value="-20" step="0.1" class="slider">
+
+                <label>Attenuation (dB/km): <span id="attenuationValue">1.5</span> dB/km</label>
+                <input type="range" id="attenuation" min="0" max="5" value="1.5" step="0.1" class="slider">
+
+                <label>Distance (m): <span id="distanceValue">3000</span> m</label>
+                <input type="range" id="distance" min="0" max="5000" value="3000" step="10" class="slider">
+
+                <button class="btn btn-primary w-100 mt-3" id="analyzeBtn">Analyze Fiber</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h5>Prediction Results</h5>
+                <div id="detected" class="result-box">Detected: No Fault</div>
+                
+                <h6 class="mt-3">Probabilities:</h6>
+                <ul id="probabilities"></ul>
+
+                <h6>Interpretation:</h6>
+                <p id="interpretation">The fiber appears to be functioning normally.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <canvas id="fiberChart"></canvas>    
+    </div>
+</div>
+
+<script>
+    var ctx = document.getElementById('fiberChart').getContext('2d');
+    
+    // Initialize chart with empty data
+    var fiberChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],  // Time or device names (empty initially)
+            datasets: [{
+                label: 'Fiber Attenuation',
+                data: [],  // Fiber values will be populated dynamically
+                borderColor: 'rgb(75, 192, 192)',
+                fill: false,
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Fiber Value'
+                    }
+                }
+            }
+        }
+    });
+
+    // Fetch the history data from the server and update the chart
+    function fetchHistoryData() {
+        $.get('/get_history_data', function(data) {
+            if (data.error) {
+                console.log('Error:', data.error);
+                return;
+            }
+
+            // Arrays to store the new labels and data from the server
+            var newLabels = [];
+            var newData = [];
+
+            // Iterate through the fetched data and extract labels and values
+            data.forEach(function(record) {
+                newLabels.push(record.date);  // Time of record
+                newData.push(record.fiber_val);  // Fiber value
+            });
+
+            // Update the chart with the new data
+            fiberChart.data.labels = newLabels;
+            fiberChart.data.datasets[0].data = newData;
+            fiberChart.update();
+        });
+    }
+
+    // Call the fetchHistoryData function every 5 seconds to update the chart
+    setInterval(fetchHistoryData, 2000);
+
+    // Initial data fetch on page load
+    fetchHistoryData();
+</script>
+
+
+<script>
+    function updateValues() {
+        $("#signalValue").text($("#signal").val());
+        $("#attenuationValue").text($("#attenuation").val());
+        $("#distanceValue").text($("#distance").val());
+    }
+
+    $("input[type='range']").on("input", updateValues);
+
+    $("#analyzeBtn").click(function () {
+        let data = {
+            signal: parseFloat($("#signal").val()),
+            attenuation: parseFloat($("#attenuation").val()),
+            distance: parseFloat($("#distance").val())
+        };
+
+        $.ajax({
+            url: "/analyze",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            dataType: "json",
+            success: function (response) {
+                $("#detected").text("Detected: " + response.detected)
+                    .attr("class", "result-box " + (response.detected === "No Fault" ? "text-success" : "text-danger"));
+
+                $("#probabilities").empty();
+                $.each(response.probabilities, function (key, value) {
+                    if (value > 0) { 
+                        $("#probabilities").append(`<li>${key}: ${parseFloat(value).toFixed(2)}%</li>`); 
+                    }
+                });
+
+                $("#interpretation").text(response.interpretation);
+            },
+            error: function () {
+                alert("An error occurred while analyzing the fiber.");
+            }
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

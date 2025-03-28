@@ -1,0 +1,12 @@
+[
+    {
+        "device_id": "003",
+        "device_name": "laptop",
+        "address": "Kicukiro"
+    },
+    {
+        "device_id": "4",
+        "device_name": "dwc",
+        "address": "dc"
+    }
+]
