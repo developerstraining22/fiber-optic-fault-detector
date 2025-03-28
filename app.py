@@ -408,4 +408,4 @@ def sendMail(text):
         server.quit()
 
 if __name__ == '__main__':
-    app.run(host="192.168.1.69", port=5000, debug=True)
+    app.run(debug=True)
