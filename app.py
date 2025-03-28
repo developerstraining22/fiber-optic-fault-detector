@@ -205,7 +205,7 @@ def get_history_data():
         with open('history.json', 'r') as file:
             history_data = json.load(file)
         # Sort the data by date in descending order
-        history_data.sort(key=lambda x: datetime.strptime(x['date'], '%Y-%m-%d %H:%M:%S'), reverse=True)
+        # history_data.sort(key=lambda x: datetime.strptime(x['date'], '%Y-%m-%d %H:%M:%S'), reverse=True)
         
         return jsonify(history_data)  # Return the data as JSON
     except Exception as e:
