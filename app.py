@@ -384,7 +384,7 @@ def sendMailIfNeeded(error_type, ettenua, distan, signal_power):
 def sendMail(text,atten,distance,signal_power):
     """ Function to send an email alert """
     sender_email = 'johncthe1@gmail.com'  # Replace with your email
-    receiver_email = 'jadokanamugire@gmail.com'  # Replace with receiver's email
+    receiver_email = 'jcturisangait1996@gmail.com'  # Replace with receiver's email
     subject = 'Fiber Fault identification'
     body = f"Alert: {text} detected in the fiber optic network, with signal power of {signal_power}, attenuation of {atten} at {distance} distance"
 
