@@ -123,19 +123,21 @@ def analyze():
     try:
         data = request.get_json()
         signal_power = float(data['signal'])
+        attenuationx = float(data['attenuation'])
+        distance = int(data['distance'])
 
         # Determine fault type based on signal power
         if 0 >= signal_power > -29:
             detected = "No Fault"
         elif -29 >= signal_power > -33:
             detected = "Fiber Deformation"
-            sendMailIfNeeded("Fiber Deformation")
+            sendMailIfNeeded("Fiber Deformation", attenuationx, distance, signal_power)
         elif -34 >= signal_power > -40:
             detected = "Attenuation or High Loss"
-            sendMailIfNeeded("Attenuation or High Loss")
+            sendMailIfNeeded("Attenuation or High Loss", attenuationx, distance, signal_power)
         else:  # signal_power <= -41
             detected = "Fiber Cut"
-            sendMailIfNeeded("Fiber Cut")
+            sendMailIfNeeded("Fiber Cut", attenuationx, distance, signal_power)
 
         result = {
             "detected": detected,
@@ -261,13 +263,13 @@ def get_data():
         detected = "No Fault"
     elif -29 >= scaled_fiber_val > -33:
         detected = "Fiber Deformation"
-        sendMailIfNeeded("Fiber Deformation")
+        sendMailIfNeeded("Fiber Deformation", attenuation, "4000", scaled_fiber_val)
     elif -34 >= scaled_fiber_val > -40:
         detected = "Attenuation or High Loss"
-        sendMailIfNeeded("Attenuation or High Loss")
+        sendMailIfNeeded("Attenuation or High Loss", attenuation, "4000", scaled_fiber_val)
     else:  # scaled_fiber_val <= -41
         detected = "Fiber Cut"
-        sendMailIfNeeded("Fiber Cut")
+        sendMailIfNeeded("Fiber Cut", attenuation, "4000", scaled_fiber_val)
     
     new_device = {
         "device_id": device_id,
@@ -362,7 +364,7 @@ def delete_device():
 
     return jsonify({"message": "Device deleted successfully!"})
 
-def sendMailIfNeeded(error_type):
+def sendMailIfNeeded(error_type, ettenua, distan, signal_power):
     """ Sends an email only if 2 minutes have passed since the last email for this error. """
     global last_email_sent
     current_time = time.time()
@@ -376,15 +378,15 @@ def sendMailIfNeeded(error_type):
 
     # Update last sent time and send the email
     last_email_sent[error_type] = current_time
-    sendMail(error_type)
+    sendMail(error_type, ettenua, distan, signal_power)
 
 
-def sendMail(text):
+def sendMail(text,atten,distance,signal_power):
     """ Function to send an email alert """
     sender_email = 'johncthe1@gmail.com'  # Replace with your email
     receiver_email = 'jcturisangait1996@gmail.com'  # Replace with receiver's email
-    subject = 'Fiber Optic Fault Detected'
-    body = f"Alert: {text} detected in the fiber optic network."
+    subject = 'Fiber Fault identification'
+    body = f"Alert: {text} detected in the fiber optic network, with signal power of {signal_power}, attenuation of {atten} at {distance} distance"
 
     password = 'lewdmjrjmwkfdgpb'  # Replace with your actual email password or App Password
 
