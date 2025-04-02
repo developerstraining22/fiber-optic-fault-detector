@@ -19,7 +19,7 @@ def save_devices(devices):
     with open(DEVICE_FILE, "w") as file:
         json.dump(devices, file, indent=4)
 
-def add_device(device_id, device_name, address):
+def add_device(device_id, device_name, address, portnumber, portname):
     """Add a new device to the JSON file."""
     devices = load_devices()
     
@@ -32,7 +32,7 @@ def add_device(device_id, device_name, address):
     save_devices(devices)
     return True
 
-def update_device(device_id, device_name, address):
+def update_device(device_id, device_name, address, portnumber, portname):
     """Update an existing device."""
     devices = load_devices()
     for device in devices:
