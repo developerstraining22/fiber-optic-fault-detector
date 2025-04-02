@@ -8,7 +8,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <style>
-
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f8f9fa;
@@ -21,10 +20,6 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .slider {
-            width: 100%;
-            accent-color: #007bff;
-        }
         .btn-primary {
             background-color: #007bff;
             border-radius: 5px;
@@ -32,94 +27,7 @@
         .btn-primary:hover {
             background-color: #0056b3;
         }
-        .result-box {
-            background: #e9f7ef;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
-            color: green;
-        }
     </style>
-
-    
-<!-- Styles -->
-<style>
-
-    h2 {
-        color: #333;
-    }
-
-    .section {
-        margin-bottom: 20px;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-    }
-
-    .btn {
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        color: white;
-        border: none;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-
-    .btn-success {
-        background-color: #28a745;
-        color: white;
-        border: none;
-    }
-
-    .btn-success:hover {
-        background-color: #218838;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-        border: none;
-    }
-
-    .btn-secondary:hover {
-        background-color: #5a6268;
-    }
-
-    .list-group {
-        margin-top: 15px;
-    }
-
-    .list-group-item {
-        padding: 10px;
-        font-size: 16px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        margin-bottom: 5px;
-        border-radius: 4px;
-    }
-
-    .list-group-item:hover {
-        background-color: #f1f1f1;
-    }
-</style>
 </head>
 <body>
 
@@ -136,14 +44,6 @@
                 <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
                 <li class="nav-item"><a class="nav-link" href="/devices">Devices</a></li>
                 <li class="nav-item"><a class="nav-link" href="/analytics">Analytics</a></li>
-            
-                {% if user %}
-                    {# <h2>Welcome, {{ user }}</h2> #}
-                    <li class="nav-item"><a class="nav-link btn btn-danger" href="{{ url_for('logout') }}">Logout</a></li>
-                {% else %}
-                    {# <h2>Welcome, Guest</h2> #}
-                    <li class="nav-item"><a class="nav-link btn btn-primary" href="{{ url_for('login') }}">Login</a></li>
-                {% endif %}
             </ul>
         </div>
     </div>
@@ -159,18 +59,15 @@
         <div class="form-group">
             <input type="text" id="device_id" class="form-control" placeholder="Device ID" required>
         </div>
-        
         <div class="form-group">
             <input type="text" id="device_name" class="form-control" placeholder="Device Name" required>
         </div>
         <div class="form-group">
             <input type="text" id="address" class="form-control" placeholder="Address" required>
         </div>
-        
         <div class="form-group">
             <input type="text" id="portnumber" class="form-control" placeholder="Port Number" required>
         </div>
-        
         <div class="form-group">
             <input type="text" id="portname" class="form-control" placeholder="Port Name" required>
         </div>
@@ -182,135 +79,104 @@
     <!-- Devices List Section -->
     <div class="section">
         <h3>Devices</h3>
-        <ol id="deviceList" class="list-decimal pl-6">
+        <ol id="deviceList" class="list-group">
             <!-- Devices will be dynamically populated here -->
         </ol>
     </div>
-
-    <!-- Edit Device Form -->
-    <div id="editForm" class="section" style="display:none;">
-        <h3>Edit Device</h3>
-        <div class="form-group">
-            <input type="text" id="edit_device_name" class="form-control" placeholder="Device Name" required>
-        </div>
-        <div class="form-group">
-            <input type="text" id="edit_address" class="form-control" placeholder="Address" required>
-        </div>
-        <button class="btn btn-success" onclick="submitEdit()">Save Changes</button>
-        <button class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
-    </div>
 </div>
 
-
-
-    <script>
-        let currentDeviceId = null;
-
-        function loadDevices() {
-            $.get("/get_devices", function(data) {
-                $("#deviceList").empty();
-                data.forEach(device => {
-                    $("#deviceList").append(
-                        `
-                            <li class="flex items-center justify-between bg-white border border-gray-200 rounded-md shadow-sm mb-2 py-2 px-4 hover:bg-gray-100">
-                                <span class="text-gray-800">
-                                    ${device.device_id} - ${device.device_name} - ${device.address} - ${device.portnumber}
-                                </span>
-                                <div class="space-x-2">
-                                    <button onclick="editDevice('${device.device_id}', '${device.device_name}', '${device.address}')" class="btn btn-success">
-                                        Edit
-                                    </button>
-                                    <button onclick="deleteDevice('${device.device_id}')" class="btn btn-danger">
-                                        Delete
-                                    </button>
-                                </div>
-                            </li>
-                        
-                        `
-                    );
-                });
+<script>
+    function loadDevices() {
+        $.get("/get_devices", function(data) {
+            $("#deviceList").empty();
+            data.forEach(device => {
+                $("#deviceList").append(
+                    `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>${device.device_id} - ${device.device_name} - ${device.address} - ${device.portnumber} - ${device.portname}</span>
+                        <div>
+                            <button onclick="editDevice('${device.device_id}', '${device.device_name}', '${device.address}', '${device.portnumber}', '${device.portname}')" class="btn btn-success btn-sm">Edit</button>
+                            <button onclick="deleteDevice('${device.device_id}')" class="btn btn-danger btn-sm">Delete</button>
+                        </div>
+                    </li>`
+                );
             });
-        }
+        });
+    }
 
-        function addDevice() {
-            let data = {
-                device_id: $("#device_id").val(),
-                device_name: $("#device_name").val(),
-                address: $("#address").val,
-                portnumber: $("#portnumber").val(),
-                portname: $("#portname").val()
-            };
+    function addDevice() {
+        let data = {
+            device_id: $("#device_id").val(),
+            device_name: $("#device_name").val(),
+            address: $("#address").val(),
+            portnumber: $("#portnumber").val(),
+            portname: $("#portname").val()
+        };
 
-            $.ajax({
-                url: "/add_device",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function(response) {
-                    alert(response.message);
-                    loadDevices();
-                },
-                error: function(xhr) {
-                    alert("Error: " + xhr.responseJSON.message);
-                }
-            });
-        }
+        $.ajax({
+            url: "/add_device",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function(response) {
+                alert(response.message);
+                loadDevices();
+            },
+            error: function(xhr) {
+                alert("Error: " + xhr.responseJSON.message);
+            }
+        });
+    }
 
-        function deleteDevice(device_id) {
-            $.ajax({
-                url: "/delete_device",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({ device_id }),
-                success: function(response) {
-                    alert(response.message);
-                    loadDevices();
-                }
-            });
-        }
+    function deleteDevice(device_id) {
+        $.ajax({
+            url: "/delete_device",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ device_id }),
+            success: function(response) {
+                alert(response.message);
+                loadDevices();
+            }
+        });
+    }
 
-        function editDevice(device_id, device_name, address) {
-            // Show the edit form and pre-fill the fields
-            $("#editForm").show();
-            currentDeviceId = device_id;
-            $("#edit_device_name").val(device_name);
-            $("#edit_address").val(address);
-        }
+    function editDevice(device_id, device_name, address, portnumber, portname) {
+        let newDeviceName = prompt("Edit Device Name:", device_name);
+        let newAddress = prompt("Edit Address:", address);
+        let newPortNumber = prompt("Edit Port Number:", portnumber);
+        let newPortName = prompt("Edit Port Name:", portname);
 
-        function submitEdit() {
+        if (newDeviceName && newAddress && newPortNumber && newPortName) {
             let updatedData = {
-                device_id: currentDeviceId,
-                device_name: $("#edit_device_name").val(),
-                address: $("#edit_address").val()
+                device_id: device_id,
+                device_name: newDeviceName,
+                address: newAddress,
+                portnumber: newPortNumber,
+                portname: newPortName
             };
 
             $.ajax({
-                url: "/edit_device",  // Make sure this URL matches your Flask route
+                url: "/edit_device",
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(updatedData),
                 success: function(response) {
                     alert(response.message);
                     loadDevices();
-                    cancelEdit();  // Hide the form after submitting
                 },
                 error: function(xhr) {
                     alert("Error: " + xhr.responseJSON.message);
                 }
             });
         }
+    }
 
-        function cancelEdit() {
-            // Hide the edit form without saving
-            $("#editForm").hide();
-            currentDeviceId = null;
-        }
+    $(document).ready(function() {
+        loadDevices();
+    });
+</script>
 
-        $(document).ready(function() {
-            loadDevices();
-        });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
