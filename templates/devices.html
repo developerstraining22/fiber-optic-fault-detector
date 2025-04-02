@@ -6,7 +6,13 @@
     <title>Fiber Optic Fault Detector</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        canvas {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -20,12 +26,23 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .slider {
+            width: 100%;
+            accent-color: #007bff;
+        }
         .btn-primary {
             background-color: #007bff;
             border-radius: 5px;
         }
         .btn-primary:hover {
             background-color: #0056b3;
+        }
+        .result-box {
+            background: #e9f7ef;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: green;
         }
     </style>
 </head>
@@ -44,6 +61,14 @@
                 <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
                 <li class="nav-item"><a class="nav-link" href="/devices">Devices</a></li>
                 <li class="nav-item"><a class="nav-link" href="/analytics">Analytics</a></li>
+            
+                {% if user %}
+                    {# <h2>Welcome, {{ user }}</h2> #}
+                    <li class="nav-item"><a class="nav-link btn btn-danger" href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    {# <h2>Welcome, Guest</h2> #}
+                    <li class="nav-item"><a class="nav-link btn btn-primary" href="{{ url_for('login') }}">Login</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -104,28 +129,38 @@
     }
 
     function addDevice() {
-        let data = {
-            device_id: $("#device_id").val(),
-            device_name: $("#device_name").val(),
-            address: $("#address").val(),
-            portnumber: $("#portnumber").val(),
-            portname: $("#portname").val()
-        };
+    let device_id = $("#device_id").val();
+    let device_name = $("#device_name").val();
+    let address = $("#address").val();
+    let portnumber = $("#portnumber").val();
+    let portname = $("#portname").val();
 
-        $.ajax({
-            url: "/add_device",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            success: function(response) {
-                alert(response.message);
-                loadDevices();
-            },
-            error: function(xhr) {
-                alert("Error: " + xhr.responseJSON.message);
-            }
-        });
-    }
+    console.log("Port Number:", portnumber); // Debugging
+    console.log("Port Name:", portname); // Debugging
+
+    let data = {
+        device_id: device_id,
+        device_name: device_name,
+        address: address,
+        portnumber: portnumber,
+        portname: portname
+    };
+
+    $.ajax({
+        url: "/add_device",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function(response) {
+            alert(response.message);
+            loadDevices();
+        },
+        error: function(xhr) {
+            alert("Error: " + xhr.responseJSON.message);
+        }
+    });
+}
+
 
     function deleteDevice(device_id) {
         $.ajax({
