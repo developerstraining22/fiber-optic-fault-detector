@@ -303,7 +303,7 @@ def get_devices_route():
 @app.route('/add_device', methods=['POST'])
 def add_device_route():
     data = request.get_json()
-    success = add_device(data['device_id'], data['device_name'], data['address'])
+    success = add_device(data['device_id'], data['device_name'], data['address'], data['portnumber'], data['portname'])
     return jsonify({"success": success, "message": "Device added" if success else "Device ID already exists"})
 
 
@@ -313,8 +313,8 @@ def edit_device():
     data = request.get_json()  # Get the incoming JSON data
     
     # Check if the necessary fields are present in the request data
-    if not all(key in data for key in ["device_id", "device_name", "address"]):
-        return jsonify({"message": "Missing required fields: device_id, device_name, address"}), 400
+    if not all(key in data for key in ["device_id", "device_name", "address", "portnumber", "portname"]):
+        return jsonify({"message": "Missing required fields: device_id, device_name, address,portnumber,portname"}), 400
 
     # Read the existing devices from the JSON file
     devices = read_json()
@@ -325,6 +325,8 @@ def edit_device():
             # Update the device's name and address
             device["device_name"] = data["device_name"]
             device["address"] = data["address"]
+            device["portnumber"] = data["portnumber"]
+            device["portname"] = data["portname"]
 
             # Write the updated list of devices back to the JSON file
             write_json(devices)
@@ -347,6 +349,8 @@ def update_device():
         if device["device_id"] == data["device_id"]:
             device["device_name"] = data["device_name"]
             device["address"] = data["address"]
+            device["portnumber"] = data["portnumber"]
+            device["portname"] = data["portname"]
             write_json(devices)
             return jsonify({"message": "Device updated successfully!"})
 
@@ -386,7 +390,7 @@ def sendMail(text,atten,distance,signal_power):
     sender_email = 'johncthe1@gmail.com'  # Replace with your email
     receiver_email = 'jadokanamugire@gmail.com'  # Replace with receiver's email
     subject = 'Fiber Fault identification'
-    body = f"Alert: {text} detected in the fiber optic network, with signal power of {signal_power}, attenuation of {atten} at {distance} distance"
+    body = f"Alert: {text} detected in the fiber optic network, with signal power of {signal_power}, attenuation of {atten} at {distance} distance, this happened on port 001"
 
     password = 'lewdmjrjmwkfdgpb'  # Replace with your actual email password or App Password
 
