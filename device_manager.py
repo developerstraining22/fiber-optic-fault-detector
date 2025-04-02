@@ -28,7 +28,7 @@ def add_device(device_id, device_name, address):
         if device['device_id'] == device_id:
             return False  # Device ID must be unique
     
-    devices.append({"device_id": device_id, "device_name": device_name, "address": address})
+    devices.append({"device_id": device_id, "device_name": device_name, "address": address, "portnumber": portnumber, "portname": portname})
     save_devices(devices)
     return True
 
@@ -39,6 +39,8 @@ def update_device(device_id, device_name, address):
         if device['device_id'] == device_id:
             device['device_name'] = device_name
             device['address'] = address
+            device['portnumber'] = portnumber
+            device['portname'] = portname
             save_devices(devices)
             return True
     return False
